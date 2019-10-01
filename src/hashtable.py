@@ -15,6 +15,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -40,6 +41,10 @@ class HashTable:
 
 
     def insert(self, key, value):
+
+        if self.count >= self.capacity:
+            self.resize()
+
         index = self._hash_djb2(key)
         pair = LinkedPair(key, value)
         if self.storage[index] is None:
@@ -53,6 +58,7 @@ class HashTable:
                 elif current.next is None:
                     current.next = pair
                 current = current.next
+        self.count += 1
 
 
 
@@ -64,7 +70,10 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_djb2(key)
+
+        if self.storage[index] is not None:
+            self.st
 
 
     def retrieve(self, key):
@@ -73,20 +82,21 @@ class HashTable:
         if self.storage[index] is None:
             return None
 
-        value = self.storage[index].value
 
         return self.storage[index].value
 
 
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
 
-        Fill this in.
-        '''
-        pass
+        for i in self.storage:
+            if i is not None:
+                new_index = self._hash_djb2(i.key)
+                new_storage[new_index] = i
+
+        self.storage = new_storage
 
 
 
