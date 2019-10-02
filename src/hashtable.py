@@ -15,24 +15,21 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
-        '''
-        Hash an arbitrary key and return an integer.
-
-        You may replace the Python hash with DJB2 as a stretch goal.
-        '''
-        return hash(key)
+        pass
 
 
     def _hash_djb2(self, key):
-        '''
-        Hash an arbitrary key using DJB2 hash
 
-        OPTIONAL STRETCH: Research and implement DJB2
-        '''
-        pass
+        hash = 5381
+
+
+        for i in key:
+            hash = ((hash << 5) + hash) + ord(i)
+        return hash % self.capacity
 
 
     def _hash_mod(self, key):
@@ -40,51 +37,64 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         within the storage capacity of the hash table.
         '''
-        return self._hash(key) % self.capacity
+        return self._hash_djb2(key) % self.capacity
 
 
     def insert(self, key, value):
-        '''
-        Store the value with the given key.
 
-        Hash collisions should be handled with Linked List Chaining.
+        if self.count >= self.capacity:
+            self.resize()
 
-        Fill this in.
-        '''
-        pass
+        index = self._hash_djb2(key)
+        pair = LinkedPair(key, value)
+        if self.storage[index] is None:
+            self.storage[index] = pair
+        else:
+            current = self.storage[index]
+            while current:
+                if current.key == pair.key:
+                    current.value = pair.value
+                    return
+                elif current.next is None:
+                    current.next = pair
+                current = current.next
+        self.count += 1
 
 
 
     def remove(self, key):
         '''
         Remove the value stored with the given key.
-
         Print a warning if the key is not found.
-
         Fill this in.
         '''
-        pass
+        index = self._hash_djb2(key)
+
+        if self.storage[index] is not None:
+            self.storage[index] = None
 
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
+        index = self._hash_djb2(key)
 
-        Returns None if the key is not found.
+        if self.storage[index] is None:
+            return None
 
-        Fill this in.
-        '''
-        pass
+
+        return self.storage[index].value
+
 
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
 
-        Fill this in.
-        '''
-        pass
+        for i in self.storage:
+            if i is not None:
+                new_index = self._hash_djb2(i.key)
+                new_storage[new_index] = i
+
+        self.storage = new_storage
 
 
 
