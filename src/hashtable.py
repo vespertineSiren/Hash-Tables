@@ -65,15 +65,13 @@ class HashTable:
     def remove(self, key):
         '''
         Remove the value stored with the given key.
-
         Print a warning if the key is not found.
-
         Fill this in.
         '''
         index = self._hash_djb2(key)
 
         if self.storage[index] is not None:
-            self.st
+            self.storage[index] = None
 
 
     def retrieve(self, key):
